@@ -1,10 +1,12 @@
 import 'dart:io';
-import 'scrolling_ticker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../providers/overlay_provider.dart';
 import '../providers/lyrics_provider.dart';
 import '../providers/scripture_provider.dart';
+import 'scrolling_ticker.dart';
 
 class OverlayPreview extends ConsumerWidget {
   final String mainLabel;
@@ -29,6 +31,8 @@ class OverlayPreview extends ConsumerWidget {
     final lowerTitle = ref.watch(lowerThirdsTitleProvider);
     final selectedSong = ref.watch(selectedSongProvider);
     final selectedScripture = ref.watch(selectedScriptureProvider);
+
+    final double lyricsTop = pipLabel!= null? 110 : 16;
 
     return Container(
       decoration: BoxDecoration(
@@ -55,17 +59,27 @@ class OverlayPreview extends ConsumerWidget {
               ],
             ),
           ),
-          // Scrolling ticker along the very bottom
-              if (showTicker)
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: ScrollingTicker(text: tickerText),
+
+          // Logo
+          if (showLogo)
+            Positioned(
+              top: 16,
+              left: 16,
+              child: SizedBox(
+                width: 80,
+                height: 80,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: logoPath!= null
+                     ? Image.file(logoPath, fit: BoxFit.contain)
+                      : Image.asset('assets/images/church_logo.png',
+                          fit: BoxFit.contain),
                 ),
+              ),
+            ),
 
           // PIP
-          if (pipLabel != null)
+          if (pipLabel!= null)
             Positioned(
               top: 16,
               right: 16,
@@ -94,38 +108,17 @@ class OverlayPreview extends ConsumerWidget {
               ),
             ),
 
-          // Church Logo Overlay — defaults to the bundled church logo,
-              // falls back to an uploaded custom one if you ever set it
-              if (showLogo)
-                Positioned(
-                  top: 16,
-                  left: 16,
-                  child: SizedBox(
-                    width: 80,
-                    height: 80,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: logoPath != null
-                          ? Image.file(logoPath, fit: BoxFit.contain)
-                          : Image.asset('assets/images/church_logo.png',
-                              fit: BoxFit.contain),
-                    ),
-                  ),
-                ),
-            ),
-
           // Lower Thirds
           if (showLowerThirds && lowerName.isNotEmpty)
             Positioned(
               bottom: 80,
               left: 16,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.75),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border(
+                  border: const Border(
                     left: BorderSide(color: Colors.amber, width: 4),
                   ),
                 ),
@@ -142,18 +135,15 @@ class OverlayPreview extends ConsumerWidget {
                     ),
                     Text(
                       lowerTitle,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                      ),
+                      style: const TextStyle(color: Colors.white70, fontSize: 12),
                     ),
                   ],
                 ),
               ),
             ),
 
-          // Scripture Overlay
-          if (showScripture && selectedScripture != null)
+          // Scripture
+          if (showScripture && selectedScripture!= null)
             Positioned(
               top: 120,
               left: 16,
@@ -179,20 +169,17 @@ class OverlayPreview extends ConsumerWidget {
                     const SizedBox(height: 8),
                     Text(
                       selectedScripture.text,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
                     ),
                   ],
                 ),
               ),
             ),
 
-          // Lyrics Overlay (top area)
-          if (showLyrics && selectedSong != null)
+          // Lyrics
+          if (showLyrics && selectedSong!= null)
             Positioned(
-              top: pipLabel != null ? 110 : 16,
+              top: lyricsTop,
               left: 16,
               right: 16,
               child: Container(
@@ -211,6 +198,15 @@ class OverlayPreview extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
+            ),
+
+          // Ticker - keep last so it’s on top
+          if (showTicker)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: ScrollingTicker(text: tickerText),
             ),
         ],
       ),
