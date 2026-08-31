@@ -1,4 +1,4 @@
-import 'package:flutter_webrtc/flutter_webrtc.dart';
+6import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'signaling_service.dart';
 
 /// Runs on a Camera phone (Pastor or Crowd) — captures its own camera+mic
@@ -18,7 +18,17 @@ class CameraPeerService {
 
     _pc = await createPeerConnection({
       'iceServers': [
-        {'urls': 'stun:stun.l.google.com:19302'}
+        {'urls': 'stun:stun.l.google.com:19302'},
+        {
+          'urls': 'turn:openrelay.metered.ca:80',
+          'username': 'openrelayproject',
+          'credential': 'openrelayproject',
+        },
+        {
+          'urls': 'turn:openrelay.metered.ca:443',
+          'username': 'openrelayproject',
+          'credential': 'openrelayproject',
+        },
       ]
     });
 
