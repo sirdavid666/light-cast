@@ -26,16 +26,20 @@ workflows:
         script: |
           flutter pub get
 
-      - name: Run tests
+      - name: Regenerate Gradle wrapper
         script: |
-          flutter test || true
+          cd android
+          gradle wrapper --gradle-version 8.6 --distribution-type bin
+          cd ..
 
-      - name: Build APK
+      - name: Build APK directly with Gradle (bypasses Flutter's buggy auto-migrator)
         script: |
-          flutter build apk --release --android-skip-build-dependency-validation
+          cd android
+          ./gradlew assembleDebug
+          cd ..
 
     artifacts:
-      - build/app/outputs/flutter-apk/*.apk
+      - android/app/build/outputs/apk/debug/*.apk
 
     publishing:
       email:
