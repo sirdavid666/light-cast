@@ -59,6 +59,7 @@ class DirectorPeerService {
   final String role;
   final RTCVideoRenderer remoteRenderer;
   RTCPeerConnection? _pc;
+  void Function(String state)? onStateChange;
 
   DirectorPeerService(this.signaling, this.role, this.remoteRenderer);
 
@@ -71,9 +72,26 @@ class DirectorPeerService {
       });
 
       _pc!.onTrack = (event) {
-        if (event.track.kind == 'video' && event.streams.isNotEmpty) {
-          remoteRenderer.srcObject = event.streams[0];
+        onStateChange?.call(
+            'track received: ${event.track.kind}, streams: ${event.streams.length}');
+        if (event.track.kind == 'video') {
+          if (event.streams.isNotEmpty) {
+            remoteRenderer.srcObject = event.streams[0];
+          } else {
+            // Fallback for library versions where streams isn't populated —
+            // build a stream directly from the track.
+            remoteRenderer.srcObject = MediaStream(event.track.id!, 'remote');
+            remoteRenderer.srcObject?.addTrack(event.track);
+          }
         }
+      };
+
+      _pc!.onIceConnectionState = (state) {
+        onStateChange?.call('ICE: $state');
+      };
+
+      _pc!.onConnectionState = (state) {
+        onStateChange?.call('connection: $state');
       };
 
       _pc!.onIceCandidate = (candidate) {
