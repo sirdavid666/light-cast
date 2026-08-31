@@ -3,7 +3,7 @@ pluginManagement {
         def properties = new Properties()
         file("local.properties").withInputStream { properties.load(it) }
         def flutterSdkPath = properties.getProperty("flutter.sdk")
-        assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+        assert flutterSdkPath != null : "flutter.sdk not set in local.properties"
         return flutterSdkPath
     }()
 
@@ -13,6 +13,23 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+
+        maven {
+            url = uri("https://jitpack.io")
+        }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+
+    repositories {
+        google()
+        mavenCentral()
+
+        maven {
+            url = uri("https://jitpack.io")
+        }
     }
 }
 
@@ -22,4 +39,4 @@ plugins {
     id "org.jetbrains.kotlin.android" version "2.2.20" apply false
 }
 
-include ":app"
+include(":app")
