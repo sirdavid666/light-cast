@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/scripture.dart';
 import '../providers/scripture_provider.dart';
+import '../providers/overlay_provider.dart';
 
 class ScriptureLibraryScreen extends ConsumerStatefulWidget {
   const ScriptureLibraryScreen({super.key});
