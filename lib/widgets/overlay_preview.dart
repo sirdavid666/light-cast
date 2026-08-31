@@ -211,13 +211,9 @@ class OverlayPreview extends ConsumerWidget {
                           decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.75),
                               borderRadius: BorderRadius.circular(10)),
-                          child: Text(
-                            selectedSong.title,
-                            style: const TextStyle(
-                                color: Colors.amber,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14),
-                            textAlign: TextAlign.center,
+                          child: AutoScrollLyrics(
+                            title: selectedSong.title,
+                            verses: selectedSong.verses,
                           ),
                         ),
                         Positioned(
