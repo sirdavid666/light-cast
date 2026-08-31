@@ -66,7 +66,7 @@ class RtmpBridge(private val activity: Activity) {
         
         // Fixed: Correct parameter order is (width, height, fps, bitrate, rotation)
         // Reference: https://github.com/pedroSG94/RootEncoder/issues/954
-        val prepared = rtmpDisplay.prepareVideo(width, height, fps, bitrate, 0)
+        val prepared = rtmpDisplay.prepareVideo(width, height, bitrate)
         
         // prepareAudio() may not return Boolean in newer versions
         // Try calling it and handle accordingly
