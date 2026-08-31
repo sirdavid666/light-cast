@@ -11,6 +11,7 @@ import '../services/stream_service.dart';
 import 'lyrics_library_screen.dart';
 import 'scripture_library_screen.dart';
 import 'logo_manager_screen.dart';
+import 'live_output_screen.dart';
 
 class DirectorDashboard extends ConsumerStatefulWidget {
   const DirectorDashboard({super.key});
@@ -40,7 +41,7 @@ class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
               width: 10,
               height: 10,
               decoration: BoxDecoration(
-                color: isLive? Colors.red : Colors.grey,
+                color: isLive ? Colors.red : Colors.grey,
                 shape: BoxShape.circle,
               ),
             ),
@@ -53,7 +54,7 @@ class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
                   const Text('LightCast Director',
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ipAsync.when(
-                    data: (ip) => Text('IP: ${ip?? "unknown"}',
+                    data: (ip) => Text('IP: ${ip ?? "unknown"}',
                         style: const TextStyle(color: Colors.white38, fontSize: 10)),
                     loading: () => const SizedBox.shrink(),
                     error: (_, __) => const SizedBox.shrink(),
@@ -82,68 +83,70 @@ class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height * 0.42,
-                child: _buildPreview(cameraMode),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.42,
+                  child: _buildPreview(cameraMode),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _statusDot('Pastor', pastorConnected),
-                  _statusDot('Crowd', crowdConnected),
-                ],
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _statusDot('Pastor', pastorConnected),
+                    _statusDot('Crowd', crowdConnected),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                alignment: WrapAlignment.center,
-                children: CameraMode.values.map((mode) {
-                  return CameraButton(
-                    mode: mode,
-                    isSelected: cameraMode == mode,
-                    onTap: () => ref.read(cameraModeProvider.notifier).setMode(mode),
-                  );
-                }).toList(),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: CameraMode.values.map((mode) {
+                    return CameraButton(
+                      mode: mode,
+                      isSelected: cameraMode == mode,
+                      onTap: () => ref.read(cameraModeProvider.notifier).setMode(mode),
+                    );
+                  }).toList(),
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            _buildOverlayToggles(),
-            const SizedBox(height: 12),
-            const LyricsBar(),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton.icon(
-                  onPressed: () => _handleGoLive(context, isLive),
-                  icon: Icon(isLive? Icons.stop : Icons.fiber_manual_record,
-                      color: Colors.white),
-                  label: Text(
-                    isLive? 'END LIVE' : 'GO LIVE',
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isLive? Colors.grey[800] : Colors.red,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              const SizedBox(height: 12),
+              _buildOverlayToggles(),
+              const SizedBox(height: 12),
+              const LyricsBar(),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _handleGoLive(context, isLive),
+                    icon: Icon(isLive ? Icons.stop : Icons.fiber_manual_record,
+                        color: Colors.white),
+                    label: Text(
+                      isLive ? 'END LIVE' : 'GO LIVE',
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isLive ? Colors.grey[800] : Colors.red,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -157,7 +160,7 @@ class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
           width: 8,
           height: 8,
           decoration: BoxDecoration(
-            color: connected? Colors.green : Colors.grey,
+            color: connected ? Colors.green : Colors.grey,
             shape: BoxShape.circle,
           ),
         ),
@@ -178,7 +181,7 @@ class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context)
-             .showSnackBar(SnackBar(content: Text('Screen capture error: $e')));
+              .showSnackBar(SnackBar(content: Text('Screen capture error: $e')));
         }
         return;
       }
@@ -194,13 +197,15 @@ class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
         await StreamService.startStream(url: url.trim());
         ref.read(isLiveProvider.notifier).state = true;
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Going LIVE...'), backgroundColor: Colors.red));
+          await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const LiveOutputScreen()),
+          );
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context)
-             .showSnackBar(SnackBar(content: Text('Failed to start stream: $e')));
+              .showSnackBar(SnackBar(content: Text('Failed to start stream: $e')));
         }
       }
     } else {
@@ -263,12 +268,14 @@ class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
     final showLyrics = ref.watch(showLyricsProvider);
     final showScripture = ref.watch(showScriptureProvider);
     final showLowerThirds = ref.watch(showLowerThirdsProvider);
-    final showTicker = ref.watch(showTickerProvider); // ADDED
+    final showTicker = ref.watch(showTickerProvider);
 
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        alignment: WrapAlignment.center,
         children: [
           _toggleChip(
               'Logo', showLogo, (v) => ref.read(showLogoProvider.notifier).state = v),
@@ -278,7 +285,7 @@ class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
               (v) => ref.read(showScriptureProvider.notifier).state = v),
           _toggleChip('Lower 3rd', showLowerThirds,
               (v) => ref.read(showLowerThirdsProvider.notifier).state = v),
-          _toggleChip('Ticker', showTicker, // ADDED
+          _toggleChip('Ticker', showTicker,
               (v) => ref.read(showTickerProvider.notifier).state = v),
         ],
       ),
@@ -292,7 +299,7 @@ class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
       onSelected: onChanged,
       selectedColor: Colors.amber,
       backgroundColor: Colors.grey[800],
-      labelStyle: TextStyle(color: value? Colors.black : Colors.white),
+      labelStyle: TextStyle(color: value ? Colors.black : Colors.white),
     );
   }
 }
