@@ -132,24 +132,23 @@ class OverlayPreview extends ConsumerWidget {
                     ),
                   ),
                 ),
-
-              // Scripture Overlay — draggable, with a cancel (X) button
+// Scripture Overlay — draggable, with a cancel (X) button
               if (showScripture && selectedScripture != null)
                 Positioned(
                   top: scripturePos.dy,
                   left: scripturePos.dx,
                   right: 16,
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      ref.read(scripturePositionProvider.notifier).state = Offset(
-                        scripturePos.dx + details.delta.dx,
-                        scripturePos.dy + details.delta.dy,
-                      );
-                    },
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      GestureDetector(
+                        onPanUpdate: (details) {
+                          ref.read(scripturePositionProvider.notifier).state = Offset(
+                            scripturePos.dx + details.delta.dx,
+                            scripturePos.dy + details.delta.dy,
+                          );
+                        },
+                        child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.8),
@@ -170,43 +169,42 @@ class OverlayPreview extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        Positioned(
-                          top: -10,
-                          right: -10,
-                          child: GestureDetector(
-                            onTap: () =>
-                                ref.read(showScriptureProvider.notifier).state = false,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                  color: Colors.black87, shape: BoxShape.circle),
-                              child:
-                                  const Icon(Icons.close, color: Colors.white, size: 16),
-                            ),
+                      ),
+                      Positioned(
+                        top: -10,
+                        right: -10,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () =>
+                              ref.read(showScriptureProvider.notifier).state = false,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                                color: Colors.black87, shape: BoxShape.circle),
+                            child: const Icon(Icons.close, color: Colors.white, size: 16),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-
-              // Lyrics Overlay — draggable, with a cancel (X) button
+// Lyrics Overlay — draggable, with a cancel (X) button
               if (showLyrics && selectedSong != null)
                 Positioned(
                   top: lyricsPos.dy,
                   left: lyricsPos.dx,
                   right: 16,
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      ref.read(lyricsPositionProvider.notifier).state = Offset(
-                        lyricsPos.dx + details.delta.dx,
-                        lyricsPos.dy + details.delta.dy,
-                      );
-                    },
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      GestureDetector(
+                        onPanUpdate: (details) {
+                          ref.read(lyricsPositionProvider.notifier).state = Offset(
+                            lyricsPos.dx + details.delta.dx,
+                            lyricsPos.dy + details.delta.dy,
+                          );
+                        },
+                        child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.75),
@@ -216,23 +214,22 @@ class OverlayPreview extends ConsumerWidget {
                             verses: selectedSong.verses,
                           ),
                         ),
-                        Positioned(
-                          top: -10,
-                          right: -10,
-                          child: GestureDetector(
-                            onTap: () =>
-                                ref.read(showLyricsProvider.notifier).state = false,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                  color: Colors.black87, shape: BoxShape.circle),
-                              child:
-                                  const Icon(Icons.close, color: Colors.white, size: 16),
-                            ),
+                      ),
+                      Positioned(
+                        top: -10,
+                        right: -10,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => ref.read(showLyricsProvider.notifier).state = false,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                                color: Colors.black87, shape: BoxShape.circle),
+                            child: const Icon(Icons.close, color: Colors.white, size: 16),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
 
