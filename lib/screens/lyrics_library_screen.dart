@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/song.dart';
 import '../providers/lyrics_provider.dart';
+import '../providers/overlay_provider.dart';
 
 class LyricsLibraryScreen extends ConsumerStatefulWidget {
   const LyricsLibraryScreen({super.key});
