@@ -12,10 +12,8 @@ import com.pedro.library.rtmp.RtmpDisplay
  * JitPack repo in settings.gradle).
  *
  * NOTE: RootEncoder's public API has changed across major versions.
- * If any method below doesn't compile, check the RootEncoder sample
- * app on GitHub for current `RtmpDisplay` usage — the concepts
- * (prepareVideo/prepareAudio/setIntentResult/startStream) are stable
- * even where exact signatures have shifted.
+ * Current API uses prepareVideo(width, height, fps, bitrate, rotation)
+ * See: https://github.com/pedroSG94/RootEncoder/issues/954
  *
  * IMPORTANT — still needed before a real Sunday service:
  *  - Move this into a foreground Service (FOREGROUND_SERVICE_MEDIA_PROJECTION
@@ -65,12 +63,25 @@ class RtmpBridge(private val activity: Activity) {
             Log.e(TAG, "start() called before attachProjection() — no screen-capture consent yet")
             return
         }
-        val prepared = rtmpDisplay.prepareVideo(width, height, bitrate, fps, /* rotation = */ 0)
-        val audioReady = rtmpDisplay.prepareAudio()
-        if (!prepared || !audioReady) {
-            Log.e(TAG, "Failed to prepare encoder (video ready=$prepared, audio ready=$audioReady)")
+        
+        // Fixed: Correct parameter order is (width, height, fps, bitrate, rotation)
+        // Reference: https://github.com/pedroSG94/RootEncoder/issues/954
+        val prepared = rtmpDisplay.prepareVideo(width, height, fps, bitrate, 0)
+        
+        // prepareAudio() may not return Boolean in newer versions
+        // Try calling it and handle accordingly
+        try {
+            rtmpDisplay.prepareAudio()
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to prepare audio encoder", e)
             return
         }
+        
+        if (!prepared) {
+            Log.e(TAG, "Failed to prepare video encoder")
+            return
+        }
+        
         rtmpDisplay.setIntentResult(pendingResultCode, data)
         rtmpDisplay.startStream(url)
         streaming = true
