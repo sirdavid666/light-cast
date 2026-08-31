@@ -71,7 +71,7 @@ class OverlayPreview extends ConsumerWidget {
                       const Icon(Icons.person, color: Colors.white54, size: 24),
                       const SizedBox(height: 4),
                       Text(
-                        pipLabel,
+                        pipLabel!,
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 10,
