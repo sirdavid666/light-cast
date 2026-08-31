@@ -6,6 +6,7 @@ import '../providers/network_provider.dart';
 import '../providers/lyrics_provider.dart';
 import '../providers/scripture_provider.dart';
 import 'scrolling_ticker.dart';
+import 'auto_scroll_lyrics.dart';
 
 class OverlayPreview extends ConsumerWidget {
   final String mainLabel;
