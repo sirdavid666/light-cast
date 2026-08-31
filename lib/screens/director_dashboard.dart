@@ -98,8 +98,16 @@ class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _statusDot('Pastor', pastorConnected),
-                    _statusDot('Crowd', crowdConnected),
+                    Column(children: [
+                      _statusDot('Pastor', pastorConnected),
+                      Text(ref.watch(pastorStatusProvider),
+                          style: const TextStyle(color: Colors.white38, fontSize: 9)),
+                    ]),
+                    Column(children: [
+                      _statusDot('Crowd', crowdConnected),
+                      Text(ref.watch(crowdStatusProvider),
+                          style: const TextStyle(color: Colors.white38, fontSize: 9)),
+                    ]),
                   ],
                 ),
               ),
