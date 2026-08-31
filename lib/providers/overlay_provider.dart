@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Visibility Toggles
-final showLogoProvider = StateProvider<bool>((ref) => false);
+final showLogoProvider = StateProvider<bool>((ref) => true);
 final showLyricsProvider = StateProvider<bool>((ref) => false);
 final showScriptureProvider = StateProvider<bool>((ref) => false);
 final showLowerThirdsProvider = StateProvider<bool>((ref) => false);
