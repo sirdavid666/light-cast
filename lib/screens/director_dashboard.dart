@@ -97,7 +97,7 @@ class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
                 spacing: 8,
                 runSpacing: 8,
                 alignment: WrapAlignment.center,
-                children: CameraMode.values.map((mode) {
+                children: CameraMode.values.map<Widget>((mode) {
                   return CameraButton(
                     mode: mode,
                     isSelected: cameraMode == mode,
