@@ -55,6 +55,14 @@ class OverlayPreview extends ConsumerWidget {
               ],
             ),
           ),
+          // Scrolling ticker along the very bottom
+              if (showTicker)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: ScrollingTicker(text: tickerText),
+                ),
 
           // PIP
           if (pipLabel != null)
