@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/director_dashboard.dart';
+import 'screens/role_selection_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +27,7 @@ class LightCastApp extends StatelessWidget {
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
         scaffoldBackgroundColor: Colors.black,
       ),
-      home: const DirectorDashboard(),
+      home: const RoleSelectionScreen(),
     );
   }
 }
