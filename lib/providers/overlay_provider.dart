@@ -9,3 +9,5 @@ final showLowerThirdsProvider = StateProvider<bool>((ref) => false);
 final logoPathProvider = StateProvider<File?>((ref) => null);
 final lowerThirdsNameProvider = StateProvider<String>((ref) => '');
 final lowerThirdsTitleProvider = StateProvider<String>((ref) => '');
+final tickerTextProvider = StateProvider<String>((ref) => 'Welcome to The Light of God Worldwide Ministry — Oke-Aanu');
+final showTickerProvider = StateProvider<bool>((ref) => true);
