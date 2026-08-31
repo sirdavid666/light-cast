@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
@@ -48,7 +47,7 @@ class OverlayPreview extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12),
           child: Stack(
             children: [
-              // Main feed
+              // Main real camera feed
               Positioned.fill(
                 child: mainConnected
                     ? RTCVideoView(mainRenderer,
@@ -62,7 +61,7 @@ class OverlayPreview extends ConsumerWidget {
                       ),
               ),
 
-              // PIP feed
+              // PIP feed — real video of the other phone
               if (pipLabel != null)
                 Positioned(
                   top: 16,
@@ -88,8 +87,8 @@ class OverlayPreview extends ConsumerWidget {
                   ),
                 ),
 
-              // Church Logo Overlay
-              if (showLogo && logoPath != null)
+              // Church Logo — uploaded custom logo, or the bundled default
+              if (showLogo)
                 Positioned(
                   top: 16,
                   left: 16,
@@ -98,7 +97,10 @@ class OverlayPreview extends ConsumerWidget {
                     height: 80,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.file(logoPath, fit: BoxFit.contain),
+                      child: logoPath != null
+                          ? Image.file(logoPath, fit: BoxFit.contain)
+                          : Image.asset('assets/images/church_logo.png',
+                              fit: BoxFit.contain),
                     ),
                   ),
                 ),
@@ -130,7 +132,7 @@ class OverlayPreview extends ConsumerWidget {
                   ),
                 ),
 
-              // Scripture Overlay - draggable
+              // Scripture Overlay — draggable, with a cancel (X) button
               if (showScripture && selectedScripture != null)
                 Positioned(
                   top: scripturePos.dy,
@@ -143,31 +145,51 @@ class OverlayPreview extends ConsumerWidget {
                         scripturePos.dy + details.delta.dy,
                       );
                     },
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.amber, width: 2),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(selectedScripture.reference,
-                              style: const TextStyle(
-                                  color: Colors.amber,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16)),
-                          const SizedBox(height: 8),
-                          Text(selectedScripture.text,
-                              style: const TextStyle(color: Colors.white, fontSize: 14)),
-                        ],
-                      ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.amber, width: 2),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(selectedScripture.reference,
+                                  style: const TextStyle(
+                                      color: Colors.amber,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16)),
+                              const SizedBox(height: 8),
+                              Text(selectedScripture.text,
+                                  style: const TextStyle(color: Colors.white, fontSize: 14)),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          top: -10,
+                          right: -10,
+                          child: GestureDetector(
+                            onTap: () =>
+                                ref.read(showScriptureProvider.notifier).state = false,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                  color: Colors.black87, shape: BoxShape.circle),
+                              child:
+                                  const Icon(Icons.close, color: Colors.white, size: 16),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
 
-              // Lyrics Overlay - draggable
+              // Lyrics Overlay — draggable, with a cancel (X) button
               if (showLyrics && selectedSong != null)
                 Positioned(
                   top: lyricsPos.dy,
@@ -180,17 +202,39 @@ class OverlayPreview extends ConsumerWidget {
                         lyricsPos.dy + details.delta.dy,
                       );
                     },
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.75),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Text(
-                        selectedSong.title,
-                        style: const TextStyle(
-                            color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 14),
-                        textAlign: TextAlign.center,
-                      ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.75),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Text(
+                            selectedSong.title,
+                            style: const TextStyle(
+                                color: Colors.amber,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Positioned(
+                          top: -10,
+                          right: -10,
+                          child: GestureDetector(
+                            onTap: () =>
+                                ref.read(showLyricsProvider.notifier).state = false,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                  color: Colors.black87, shape: BoxShape.circle),
+                              child:
+                                  const Icon(Icons.close, color: Colors.white, size: 16),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
