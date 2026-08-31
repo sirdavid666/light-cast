@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import '../providers/overlay_provider.dart';
 import '../providers/network_provider.dart';
+import '../providers/lyrics_provider.dart';
+import '../providers/scripture_provider.dart';
 import 'scrolling_ticker.dart';
 
 class OverlayPreview extends ConsumerWidget {
@@ -128,7 +130,7 @@ class OverlayPreview extends ConsumerWidget {
                   ),
                 ),
 
-              // Scripture Overlay - NOW DRAGGABLE
+              // Scripture Overlay - draggable
               if (showScripture && selectedScripture != null)
                 Positioned(
                   top: scripturePos.dy,
@@ -165,7 +167,7 @@ class OverlayPreview extends ConsumerWidget {
                   ),
                 ),
 
-              // Lyrics Overlay - NOW DRAGGABLE
+              // Lyrics Overlay - draggable
               if (showLyrics && selectedSong != null)
                 Positioned(
                   top: lyricsPos.dy,
