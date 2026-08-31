@@ -74,15 +74,8 @@ class DirectorPeerService {
       _pc!.onTrack = (event) {
         onStateChange?.call(
             'track received: ${event.track.kind}, streams: ${event.streams.length}');
-        if (event.track.kind == 'video') {
-          if (event.streams.isNotEmpty) {
-            remoteRenderer.srcObject = event.streams[0];
-          } else {
-            // Fallback for library versions where streams isn't populated —
-            // build a stream directly from the track.
-            remoteRenderer.srcObject = MediaStream(event.track.id!, 'remote');
-            remoteRenderer.srcObject?.addTrack(event.track);
-          }
+        if (event.track.kind == 'video' && event.streams.isNotEmpty) {
+          remoteRenderer.srcObject = event.streams[0];
         }
       };
 
