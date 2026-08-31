@@ -25,6 +25,8 @@ class _LogoManagerScreenState extends ConsumerState<LogoManagerScreen> {
   Widget build(BuildContext context) {
     final logoPath = ref.watch(logoPathProvider);
     final showLogo = ref.watch(showLogoProvider);
+    final tickerText = ref.watch(tickerTextProvider);
+    final tickerCtrl = TextEditingController(text: tickerText);
     final lowerName = ref.watch(lowerThirdsNameProvider);
     final lowerTitle = ref.watch(lowerThirdsTitleProvider);
     final lowerNameCtrl = TextEditingController(text: lowerName);
@@ -115,6 +117,30 @@ class _LogoManagerScreenState extends ConsumerState<LogoManagerScreen> {
               ],
             ),
             const SizedBox(height: 24),
+            const Text('Scrolling Ticker Text',
+                style: TextStyle(
+                    color: Colors.amber, fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            TextField(
+              controller: tickerCtrl,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: 'Text that scrolls along the bottom',
+                labelStyle: TextStyle(color: Colors.white70),
+                enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white30)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () {
+                ref.read(tickerTextProvider.notifier).state = tickerCtrl.text;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text('Ticker text updated')));
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+              child: const Text('Save Ticker Text', style: TextStyle(color: Colors.black)),
+            ),
 
             // Lower Thirds section
             const Text('Lower Thirds',
