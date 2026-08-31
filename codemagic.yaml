@@ -3,11 +3,11 @@ workflows:
     name: LightCast Android Build
     instance_type: mac_mini_m1
     max_build_duration: 60
-    
+
     environment:
       flutter: stable
       java: 17
-    
+
     triggering:
       events:
         - push
@@ -16,27 +16,33 @@ workflows:
         - pattern: 'main'
           include: true
           source: true
-    
+
     scripts:
       - name: Set up Flutter
         script: |
           flutter doctor
-      
+
       - name: Get dependencies
         script: |
           flutter pub get
-      
+
+      - name: Regenerate Gradle wrapper (fixes broken auto-migration URL)
+        script: |
+          cd android
+          gradle wrapper --gradle-version 8.6 --distribution-type bin
+          cd ..
+
       - name: Run tests
         script: |
           flutter test || true
-      
+
       - name: Build APK
         script: |
           flutter build apk --release
-    
+
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
-    
+
     publishing:
       email:
         recipients:
