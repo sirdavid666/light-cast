@@ -83,25 +83,24 @@ class OverlayPreview extends ConsumerWidget {
               ),
             ),
 
-          // Church Logo Overlay
-          if (showLogo && logoPath != null)
-            Positioned(
-              top: 16,
-              left: 16,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    logoPath,
-                    fit: BoxFit.contain,
+          // Church Logo Overlay — defaults to the bundled church logo,
+              // falls back to an uploaded custom one if you ever set it
+              if (showLogo)
+                Positioned(
+                  top: 16,
+                  left: 16,
+                  child: SizedBox(
+                    width: 80,
+                    height: 80,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: logoPath != null
+                          ? Image.file(logoPath, fit: BoxFit.contain)
+                          : Image.asset('assets/images/church_logo.png',
+                              fit: BoxFit.contain),
+                    ),
                   ),
                 ),
-              ),
             ),
 
           // Lower Thirds
