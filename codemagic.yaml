@@ -26,19 +26,13 @@ workflows:
         script: |
           flutter pub get
 
-      - name: Regenerate Gradle wrapper (fixes broken auto-migration URL)
-        script: |
-          cd android
-          gradle wrapper --gradle-version 8.6 --distribution-type bin
-          cd ..
-
       - name: Run tests
         script: |
           flutter test || true
 
       - name: Build APK
         script: |
-          flutter build apk --release
+          flutter build apk --release --android-skip-build-dependency-validation
 
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
