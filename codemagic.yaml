@@ -20,20 +20,25 @@ workflows:
     scripts:
       - name: Set up Flutter
         script: |
+          set -e
           flutter doctor
 
       - name: Get dependencies
         script: |
+          set -e
           flutter pub get
 
       - name: Regenerate Gradle wrapper
         script: |
+          set -e
           cd android
-          gradle wrapper --gradle-version 8.6 --distribution-type bin
+          gradle wrapper --gradle-version 8.14 --distribution-type bin
+          chmod +x gradlew
           cd ..
 
       - name: Build APK directly with Gradle (bypasses Flutter's buggy auto-migrator)
         script: |
+          set -e
           cd android
           ./gradlew assembleDebug
           cd ..
