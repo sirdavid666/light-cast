@@ -22,12 +22,12 @@ def flutterVersionName =
 android {
     namespace "com.sirdavid.lightcast"
 
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.sirdavid.lightcast"
-        minSdk 21
-        targetSdk 34
+        minSdk 26
+        targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
