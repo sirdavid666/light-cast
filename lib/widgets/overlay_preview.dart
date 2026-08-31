@@ -22,6 +22,8 @@ class OverlayPreview extends ConsumerWidget {
     final showLyrics = ref.watch(showLyricsProvider);
     final showScripture = ref.watch(showScriptureProvider);
     final showLowerThirds = ref.watch(showLowerThirdsProvider);
+    final showTicker = ref.watch(showTickerProvider);
+    final tickerText = ref.watch(tickerTextProvider);
     final logoPath = ref.watch(logoPathProvider);
     final lowerName = ref.watch(lowerThirdsNameProvider);
     final lowerTitle = ref.watch(lowerThirdsTitleProvider);
