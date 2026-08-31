@@ -16,6 +16,9 @@ final crowdVideoRendererProvider =
 final pastorConnectedProvider = StateProvider<bool>((ref) => false);
 final crowdCameraConnectedProvider = StateProvider<bool>((ref) => false);
 
+final pastorStatusProvider = StateProvider<String>((ref) => '');
+final crowdStatusProvider = StateProvider<String>((ref) => '');
+
 final directorSignalingProvider = Provider<SignalingServer>((ref) {
   final server = SignalingServer();
   final pastorRenderer = ref.watch(pastorVideoRendererProvider);
@@ -25,6 +28,8 @@ final directorSignalingProvider = Provider<SignalingServer>((ref) {
 
   final pastorPeer = DirectorPeerService(server, 'pastor', pastorRenderer);
   final crowdPeer = DirectorPeerService(server, 'crowd', crowdRenderer);
+  pastorPeer.onStateChange = (s) => ref.read(pastorStatusProvider.notifier).state = s;
+  crowdPeer.onStateChange = (s) => ref.read(crowdStatusProvider.notifier).state = s;
 
   server.onClientConnected = (role) {
     if (role == 'pastor') ref.read(pastorConnectedProvider.notifier).state = true;
