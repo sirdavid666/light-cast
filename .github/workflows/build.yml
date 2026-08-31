@@ -26,17 +26,15 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Regenerate Gradle wrapper
-        run: |
-          cd android
-          gradle wrapper --gradle-version 8.14 --distribution-type bin
-          chmod +x gradlew
-          cd ..
+      - name: Set up Gradle 8.14
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.14
 
       - name: Build APK
         run: |
           cd android
-          ./gradlew assembleDebug
+          gradle assembleDebug
           cd ..
 
       - name: Upload APK
