@@ -1,8 +1,6 @@
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'signaling_service.dart';
 
-/// Runs on a Camera phone (Pastor or Crowd) — captures its own camera+mic
-/// and sends the offer to the Director.
 class CameraPeerService {
   final SignalingClient signaling;
   RTCPeerConnection? _pc;
@@ -18,18 +16,13 @@ class CameraPeerService {
 
     _pc = await createPeerConnection({
       'iceServers': [
-        {'urls': 'stun:stun.l.google.com:19302'},
         {
-          'urls': 'turn:openrelay.metered.ca:80',
+          'urls': 'turn:openrelay.metered.ca:443?transport=tcp',
           'username': 'openrelayproject',
           'credential': 'openrelayproject',
         },
-        {
-          'urls': 'turn:openrelay.metered.ca:443',
-          'username': 'openrelayproject',
-          'credential': 'openrelayproject',
-        },
-      ]
+      ],
+      'iceTransportPolicy': 'relay',
     });
 
     for (final track in localStream!.getTracks()) {
@@ -62,8 +55,6 @@ class CameraPeerService {
   }
 }
 
-/// Runs on the Director — one instance per camera phone (one for Pastor,
-/// one for Crowd), each writing into its own video renderer.
 class DirectorPeerService {
   final SignalingServer signaling;
   final String role;
@@ -77,8 +68,13 @@ class DirectorPeerService {
     if (msg['type'] == 'offer') {
       _pc = await createPeerConnection({
         'iceServers': [
-          {'urls': 'stun:stun.l.google.com:19302'}
-        ]
+          {
+            'urls': 'turn:openrelay.metered.ca:443?transport=tcp',
+            'username': 'openrelayproject',
+            'credential': 'openrelayproject',
+          },
+        ],
+        'iceTransportPolicy': 'relay',
       });
 
       _pc!.onTrack = (event) {
