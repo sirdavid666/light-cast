@@ -5,11 +5,7 @@ import 'screens/role_selection_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    const ProviderScope(
-      child: LightCastApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: LightCastApp()));
 }
 
 class LightCastApp extends StatelessWidget {
