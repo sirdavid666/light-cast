@@ -17,12 +17,7 @@ class LiveOutputScreen extends ConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            Column(
-              children: [Expanded(child: _buildPreview(cameraMode))],
-            ),
-            // The only control visible during live — note: since this uses
-            // screen-capture streaming, tapping it WILL flash briefly on
-            // stream, same as the dismiss (X) buttons on scripture/lyrics.
+            Column(children: [Expanded(child: _buildPreview(cameraMode))]),
             Positioned(
               top: 8,
               right: 8,
