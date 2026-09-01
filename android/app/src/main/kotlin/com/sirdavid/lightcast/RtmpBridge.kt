@@ -1,26 +1,12 @@
 package com.sirdavid.lightcast
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.pedro.common.ConnectChecker
 import com.pedro.library.rtmp.RtmpDisplay
 
-/**
- * Screen-capture-to-RTMP publisher, wrapping the RootEncoder library
- * (com.github.pedroSG94.RootEncoder, added in app/build.gradle + the
- * JitPack repo in settings.gradle).
- *
- * NOTE: RootEncoder's public API has changed across major versions.
- * Current API uses prepareVideo(width, height, fps, bitrate, rotation)
- * See: https://github.com/pedroSG94/RootEncoder/issues/954
- *
- * IMPORTANT — still needed before a real Sunday service:
- *  - Move this into a foreground Service (FOREGROUND_SERVICE_MEDIA_PROJECTION
- *    permission is now in the manifest) so streaming survives screen lock.
- *  - Add reconnect handling on onConnectionFailed — wifi drops happen.
- */
-class RtmpBridge(private val activity: Activity) {
+class RtmpBridge(private val context: Context) {
     private var streaming = false
     private var pendingResultCode: Int = 0
     private var pendingData: Intent? = null
@@ -49,7 +35,7 @@ class RtmpBridge(private val activity: Activity) {
     }
 
     private val rtmpDisplay: RtmpDisplay by lazy {
-        RtmpDisplay(activity, /* useOpengl = */ true, connectChecker)
+        RtmpDisplay(context, /* useOpengl = */ true, connectChecker)
     }
 
     fun attachProjection(resultCode: Int, data: Intent) {
@@ -63,25 +49,12 @@ class RtmpBridge(private val activity: Activity) {
             Log.e(TAG, "start() called before attachProjection() — no screen-capture consent yet")
             return
         }
-        
-        // Fixed: Correct parameter order is (width, height, fps, bitrate, rotation)
-        // Reference: https://github.com/pedroSG94/RootEncoder/issues/954
         val prepared = rtmpDisplay.prepareVideo(width, height, bitrate)
-        
-        // prepareAudio() may not return Boolean in newer versions
-        // Try calling it and handle accordingly
-        try {
-            rtmpDisplay.prepareAudio()
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to prepare audio encoder", e)
+        val audioReady = rtmpDisplay.prepareAudio()
+        if (!prepared || !audioReady) {
+            Log.e(TAG, "Failed to prepare encoder (video ready=$prepared, audio ready=$audioReady)")
             return
         }
-        
-        if (!prepared) {
-            Log.e(TAG, "Failed to prepare video encoder")
-            return
-        }
-        
         rtmpDisplay.setIntentResult(pendingResultCode, data)
         rtmpDisplay.startStream(url)
         streaming = true
