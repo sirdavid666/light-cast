@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-/// Runs ONLY on the Director phone. Accepts connections from BOTH the
-/// Pastor phone and the Crowd phone, distinguishing them by a "role"
-/// each phone announces right after connecting.
 class SignalingServer {
   HttpServer? _server;
   final Map<String, WebSocket> _sockets = {};
@@ -55,8 +52,6 @@ class SignalingServer {
   }
 }
 
-/// Runs on EACH camera phone (Pastor and Crowd both use this same class,
-/// just with a different `role` string). Connects to the Director.
 class SignalingClient {
   WebSocket? _socket;
   void Function(Map<String, dynamic> message)? onMessage;
