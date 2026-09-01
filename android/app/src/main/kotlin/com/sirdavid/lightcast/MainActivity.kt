@@ -3,6 +3,7 @@ package com.sirdavid.lightcast
 import android.app.Activity
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -11,11 +12,11 @@ class MainActivity : FlutterActivity() {
     private val channelName = "lightcast/rtmp"
     private val projectionRequestCode = 4201
     private var pendingPermissionResult: MethodChannel.Result? = null
-    private lateinit var rtmpBridge: RtmpBridge
+    private var pendingResultCode: Int = -1
+    private var pendingProjectionData: Intent? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        rtmpBridge = RtmpBridge(this)
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, channelName)
             .setMethodCallHandler { call, result ->
@@ -27,20 +28,32 @@ class MainActivity : FlutterActivity() {
                     }
                     "startStream" -> {
                         val args = call.arguments as Map<*, *>
-                        rtmpBridge.start(
-                            url = args["url"] as String,
-                            width = args["width"] as Int,
-                            height = args["height"] as Int,
-                            bitrate = args["bitrate"] as Int,
-                            fps = args["fps"] as Int,
-                        )
+                        val data = pendingProjectionData
+                        if (data == null) {
+                            result.error("NO_PERMISSION", "Screen capture was not granted", null)
+                            return@setMethodCallHandler
+                        }
+                        val intent = Intent(this, StreamForegroundService::class.java).apply {
+                            action = StreamForegroundService.ACTION_START
+                            putExtra(StreamForegroundService.EXTRA_URL, args["url"] as String)
+                            putExtra(StreamForegroundService.EXTRA_WIDTH, args["width"] as Int)
+                            putExtra(StreamForegroundService.EXTRA_HEIGHT, args["height"] as Int)
+                            putExtra(StreamForegroundService.EXTRA_BITRATE, args["bitrate"] as Int)
+                            putExtra(StreamForegroundService.EXTRA_FPS, args["fps"] as Int)
+                            putExtra(StreamForegroundService.EXTRA_RESULT_CODE, pendingResultCode)
+                            putExtra(StreamForegroundService.EXTRA_PROJECTION_DATA, data)
+                        }
+                        ContextCompat.startForegroundService(this, intent)
                         result.success(null)
                     }
                     "stopStream" -> {
-                        rtmpBridge.stop()
+                        val intent = Intent(this, StreamForegroundService::class.java).apply {
+                            action = StreamForegroundService.ACTION_STOP
+                        }
+                        startService(intent)
                         result.success(null)
                     }
-                    "isStreaming" -> result.success(rtmpBridge.isStreaming())
+                    "isStreaming" -> result.success(false)
                     else -> result.notImplemented()
                 }
             }
@@ -50,7 +63,10 @@ class MainActivity : FlutterActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == projectionRequestCode) {
             val granted = resultCode == Activity.RESULT_OK && data != null
-            if (granted) rtmpBridge.attachProjection(resultCode, data!!)
+            if (granted) {
+                pendingResultCode = resultCode
+                pendingProjectionData = data
+            }
             pendingPermissionResult?.success(granted)
             pendingPermissionResult = null
         }
