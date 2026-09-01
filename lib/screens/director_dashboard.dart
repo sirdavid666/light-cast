@@ -23,7 +23,7 @@ class DirectorDashboard extends ConsumerStatefulWidget {
 class _DirectorDashboardState extends ConsumerState<DirectorDashboard> {
   @override
   Widget build(BuildContext context) {
-    ref.watch(directorSignalingProvider); // starts the local signaling server
+    ref.watch(directorSignalingProvider);
     final cameraMode = ref.watch(cameraModeProvider);
     final isLive = ref.watch(isLiveProvider);
     final ipAsync = ref.watch(directorIpProvider);
