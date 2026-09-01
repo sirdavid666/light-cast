@@ -48,7 +48,6 @@ class OverlayPreview extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12),
           child: Stack(
             children: [
-              // Main real camera feed
               Positioned.fill(
                 child: mainConnected
                     ? RTCVideoView(mainRenderer,
@@ -61,8 +60,6 @@ class OverlayPreview extends ConsumerWidget {
                         ),
                       ),
               ),
-
-              // PIP feed — real video of the other phone
               if (pipLabel != null)
                 Positioned(
                   top: 16,
@@ -87,8 +84,6 @@ class OverlayPreview extends ConsumerWidget {
                     ),
                   ),
                 ),
-
-              // Church Logo — uploaded custom logo, or the bundled default
               if (showLogo)
                 Positioned(
                   top: 16,
@@ -105,8 +100,6 @@ class OverlayPreview extends ConsumerWidget {
                     ),
                   ),
                 ),
-
-              // Lower Thirds
               if (showLowerThirds && lowerName.isNotEmpty)
                 Positioned(
                   bottom: 80,
@@ -132,7 +125,6 @@ class OverlayPreview extends ConsumerWidget {
                     ),
                   ),
                 ),
-// Scripture Overlay — draggable, with a cancel (X) button
               if (showScripture && selectedScripture != null)
                 Positioned(
                   top: scripturePos.dy,
@@ -188,7 +180,6 @@ class OverlayPreview extends ConsumerWidget {
                     ],
                   ),
                 ),
-// Lyrics Overlay — draggable, with a cancel (X) button
               if (showLyrics && selectedSong != null)
                 Positioned(
                   top: lyricsPos.dy,
@@ -232,8 +223,6 @@ class OverlayPreview extends ConsumerWidget {
                     ],
                   ),
                 ),
-
-              // Scrolling ticker
               if (showTicker)
                 Positioned(
                   left: 0,
